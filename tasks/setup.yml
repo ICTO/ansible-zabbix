@@ -1,0 +1,9 @@
+---
+# Install the Zabbix agent
+- include: tasks/agent.yml
+
+# Install the Zabbix server
+- include: tasks/server.yml
+
+# Install the Zabbix webfronted using Apache
+- include: tasks/web.yml

@@ -1,0 +1,94 @@
+---
+# Create Zabbix agent system group
+- name: "Create Zabbix agent system group: ${zabbix_agent.sys_group}"
+  group: name=${zabbix_agent.sys_group} state=present system=yes
+  when_boolean: ${with_agent}
+  tags:
+    - zabbix_agent
+
+# Create Zabbix agent system user
+- name: "Create Zabbix agent system user: ${zabbix_agent.sys_user}"
+  user: name=${zabbix_agent.sys_user} group=${zabbix_agent.sys_group} state=present system=yes
+  when_boolean: ${with_agent}
+  tags:
+    - zabbix_agent
+
+# Transfer Zabbix agent deb file
+- name: "Transfer Zabbix agent package: ${zabbix_agent.debian_package} to ${tmp_dir}"
+  copy: src=files/deb/${zabbix_agent.debian_package} dest=${tmp_dir} owner=root group=root mode=0644
+  when_boolean: ${with_agent}
+  tags:
+    - zabbix_agent
+
+# Install Zabbix agent deb file
+- name: "Install Zabbix agent: ${zabbix_agent.debian_package}"
+  shell: "dpkg -i -E ${tmp_dir}/${zabbix_agent.debian_package} 2>&1 | grep skipping | wc -l"
+  register: agent_installed
+  when_boolean: ${with_agent}
+  tags:
+    - zabbix_agent
+
+# Install Zabbix agent init script
+- name: "Install Zabbix agent init script"
+  template: src=templates/zabbix_agentd.j2 dest=/etc/init.d/zabbix_agentd owner=root group=root mode=0755
+  when_boolean: ${with_agent}
+  tags:
+    - zabbix_agent
+
+# Enable Zabbix agent config include dir
+- name: "Enable Zabbix agent config include dir"
+  lineinfile: dest=/opt/zabbix/etc/zabbix_agentd.conf state=present regexp="^Include=/opt/zabbix/etc/zabbix_agentd.conf.d/" insertafter="^# Include=/usr/local/etc/zabbix_agentd.conf.d/" line="Include=/opt/zabbix/etc/zabbix_agentd.conf.d/"
+  when_boolean: ${with_agent}
+  tags:
+    - zabbix_agent
+
+# Override defaults from Zabbix agent config file
+- name: "Put custom Zabbix agent settings in include dir"
+  template: src=templates/zabbix_agentd.conf.j2 dest=/opt/zabbix/etc/zabbix_agentd.conf.d/icto.conf owner=${zabbix_agent.sys_user} group=${zabbix_agent.sys_group} mode=0640
+  when_boolean: ${with_agent}
+  tags:
+    - zabbix_agent
+
+# Create Zabbix agent pid directory
+- name: "Create Zabbix agent pid directory: ${zabbix_agent.pid_dir}"
+  file: path=${zabbix_agent.pid_dir} group=${zabbix_agent.sys_group} owner=${zabbix_agent.sys_user} mode=0755 state=directory
+  when_boolean: ${with_agent}
+  tags:
+    - zabbix_agent
+
+# Create Zabbix agent log directory
+- name: "Create Zabbix agent log directory: ${zabbix_agent.log_dir}"
+  file: path=${zabbix_agent.log_dir} group=${zabbix_agent.sys_group} owner=${zabbix_agent.sys_user} mode=0755 state=directory
+  when_boolean: ${with_agent}
+  tags:
+    - zabbix_agent
+
+# Create Zabbix agent log file
+- name: "Create Zabbix agent logfile: ${zabbix_agent.log_file}"
+  command: touch ${zabbix_agent.log_file}
+  when_boolean: ${with_agent}
+  tags:
+    - zabbix_agent
+
+# Ensure correct permissions on Zabbix agent logfile
+- name: "Ensure correct permissions on Zabbix agent logfile: ${zabbix_agent.log_file}"
+  file: path=${zabbix_agent.log_file} owner=${zabbix_agent.sys_user} group=${zabbix_agent.sys_group} mode=0600 state=file
+  when_boolean: ${with_agent}
+  tags:
+    - zabbix_agent
+
+# Trigger Zabbix agent restart
+- name: "Trigger Zabbix agent restart"
+  command: echo
+  only_if: "${with_agent} and '${agent_installed.stdout}' == '0'"
+  notify:
+    - "Restart Zabbix agent"
+  tags:
+    - zabbix_agent
+
+# Ensure Zabbix agent is running
+- name: "Ensure Zabbix agent is running"
+  service: name=${zabbix_agent.name} state=started
+  when_boolean: ${with_agent}
+  tags:
+    - zabbix_agent

@@ -1,0 +1,38 @@
+---
+# Install Zabbix php webfrontend dependencies
+- name: "Install Zabbix PHP frontend dependencies"
+  apt: pkg=${item} state=installed update-cache=yes
+  when_boolean: ${with_web}
+  with_items: ${zabbix_web.dependencies}
+  tags:
+    - zabbix_web
+
+# Transfer Zabbix web deb file
+- name: "Transfer Zabbix web package: ${zabbix_web.debian_package} to ${tmp_dir}"
+  copy: src=files/deb/${zabbix_web.debian_package} dest=${tmp_dir} owner=root group=root mode=0644
+  when_boolean: ${with_web}
+  tags:
+    - zabbix_web
+
+# Install Zabbix web deb file
+- name: "Install Zabbix PHP frontend: ${zabbix_web.debian_package}"
+  shell: "dpkg -i -E ${tmp_dir}/${zabbix_web.debian_package} 2>&1 | grep skipping | wc -l"
+  when_boolean: ${with_web}
+  tags:
+    - zabbix_web
+
+# Override defaults from Zabbix server config file
+- name: "Put Zabbix web frontend config in place"
+  template: src=templates/zabbix_conf.php.j2 dest=${zabbix_web.root}/conf/zabbix.conf.php owner=${zabbix_web.sys_user} group=${zabbix_web.sys_group} mode=0640
+  when_boolean: ${with_web}
+  tags:
+    - zabbix_web
+
+# Manage Zabbix PHP settings
+- name: "Put custom Zabbix PHP settings in include dir"
+  copy: src=files/conf/zabbix.ini dest=/etc/php5/apache2/conf.d/zabbix.ini owner=root group=root mode=0644
+  when_boolean: ${with_web}
+  notify:
+    - "Restart Apache"
+  tags:
+    - zabbix_web

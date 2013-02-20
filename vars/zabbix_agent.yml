@@ -1,0 +1,12 @@
+---
+# Zabbix agent variables
+zabbix_agent:
+  debian_package: 'zabbix-agent-2.0.4-1_amd64.deb'
+  name: 'zabbix_agentd'
+  pid_dir: '/var/run/zabbix-agent'
+  pid_file: '/var/run/zabbix-agent/zabbix_agentd.pid'
+  log_dir: '/var/log/zabbix-agent'
+  log_file: '/var/log/zabbix-agent/zabbix_agentd.log'
+  conf_dir: '/opt/zabbix/etc/'
+  sys_user: 'zabbix'
+  sys_group: 'zabbix'
