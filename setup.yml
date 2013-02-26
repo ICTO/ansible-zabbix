@@ -1,5 +1,5 @@
 ---
-- hosts: $hosts
+- hosts: zabbix
   user: $user
   sudo: yes
   sudo_user: root

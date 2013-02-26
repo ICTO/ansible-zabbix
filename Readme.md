@@ -23,9 +23,9 @@ Playbook tested on *Debian-7.0-b4-amd64*, probably works on other Debian version
 $ git clone git@github.ugent.be:tberton/ansible-zabbix.git
 ```
 
-### Create a host file
+### Create an Ansible inventory file
 
-Following example make ansible aware of the Vagrant box reachable on localhost port 2222.
+Following example makes ansible aware of a box reachable on localhost port 2222.
 
 ```bash
 $ vi ansible.host
@@ -34,40 +34,44 @@ $ vi ansible.host
 with
 
 ```
-[vagrant]
+[zabbix]
 127.0.0.1 ansible_ssh_port=2222
+
+[zabbix:vars]
+with_zabbix_server_ip='127.0.0.1'
 ```
 
-### Create host specific variables
+### Create group specific variables
 
-Make the host_vars directory where *ansible.host* file is located.
+Create a *group_vars* directory where the *ansible.host* file is located.
 
 ```bash
-$ mkdir host_vars
+$ mkdir group_vars
 ```
 
-Create a file in the newly created directory matching your host.
+Create the file *zabbix* in the newly created directory.
 
 ```bash
-$ cd host_vars
-$ vi 127.0.0.1
+$ cd group_vars
+$ vi zabbix
 ```
 
 with
 
 ```
 ---
-with_agent: true
-with_server: true
-with_web: true
+with_zabbix_agent: true
+with_zabbix_server: true
+with_zabbix_web: true
+
 ```
 
 ### Run the playbook
 
-Use *ansible.host* as inventory. Run the playbook only for the remote host *vagrant*. Use *vagrant* as the SSH user to connect to the remote host. *-k* enables the SSH password prompt.
+Use *ansible.host* as inventory. Run the playbook only for the remote host *zabbix*. Use *vagrant* as the SSH user to connect to the remote host. *-k* enables the SSH password prompt.
 
 ```bash
-$ ansible-playbook -k -i ansible.host ansible-zabbix/setup.yml --extra-vars="hosts=vagrant user=vagrant"
+$ ansible-playbook -k -i ansible.host ansible-zabbix/setup.yml --extra-vars="user=vagrant"
 ```
 
 ## Docs and contact

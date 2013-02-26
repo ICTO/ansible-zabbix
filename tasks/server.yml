@@ -5,28 +5,28 @@
 # Install MySQL clientlib dev package (needed by zabbix-server-mysql)
 - name: "Install MySQL clientlib dev package"
   apt: pkg=libmysqlclient-dev state=installed update-cache=yes
-  when_boolean: ${with_server}
+  when_boolean: ${with_zabbix_server}
   tags:
     - zabbix_server
 
 # Create Zabbix server system group
 - name: "Create Zabbix server system group: ${zabbix_server.sys_group}"
   group: name=${zabbix_server.sys_group} state=present system=yes
-  when_boolean: ${with_server}
+  when_boolean: ${with_zabbix_server}
   tags:
     - zabbix_server
 
 # Create Zabbix server system user
 - name: "Create Zabbix server system user: ${zabbix_server.sys_user}"
   user: name=${zabbix_server.sys_user} group=${zabbix_server.sys_group} state=present system=yes
-  when_boolean: ${with_server}
+  when_boolean: ${with_zabbix_server}
   tags:
     - zabbix_server
 
 # Transfer Zabbix server deb file
 - name: "Transfer Zabbix server package: ${zabbix_server.debian_package} to ${tmp_dir}"
   copy: src=files/deb/${zabbix_server.debian_package} dest=${tmp_dir} owner=root group=root mode=0644
-  when_boolean: ${with_server}
+  when_boolean: ${with_zabbix_server}
   tags:
     - zabbix_server
 
@@ -34,63 +34,63 @@
 - name: "Install Zabbix server: ${zabbix_server.debian_package}"
   shell: "dpkg -i -E ${tmp_dir}/${zabbix_server.debian_package} 2>&1 | grep skipping | wc -l"
   register: server_installed
-  when_boolean: ${with_server}
+  when_boolean: ${with_zabbix_server}
   tags:
     - zabbix_server
 
 # Install Zabbix server init script
 - name: "Install Zabbix agent init script"
   template: src=templates/zabbix_server.j2 dest=/etc/init.d/zabbix_server owner=root group=root mode=0755
-  when_boolean: ${with_server}
+  when_boolean: ${with_zabbix_server}
   tags:
     - zabbix_server
 
 # Enable Zabbix server config include dir
 - name: "Enable Zabbix server config include dir"
   lineinfile: dest=/opt/zabbix/etc/zabbix_server.conf state=present regexp="^Include=/opt/zabbix/etc/zabbix_server.conf.d/" insertafter="^# Include=/usr/local/etc/zabbix_server.conf.d/" line="Include=/opt/zabbix/etc/zabbix_server.conf.d/"
-  when_boolean: ${with_server}
+  when_boolean: ${with_zabbix_server}
   tags:
     - zabbix_server
 
 # Override defaults from Zabbix server config file
 - name: "Put custom Zabbix server settings in include dir"
   template: src=templates/zabbix_server.conf.j2 dest=/opt/zabbix/etc/zabbix_server.conf.d/icto.conf owner=${zabbix_server.sys_user} group=${zabbix_server.sys_group} mode=0640
-  when_boolean: ${with_server}
+  when_boolean: ${with_zabbix_server}
   tags:
     - zabbix_server
 
 # Create Zabbix server pid directory
 - name: "Create Zabbix server pid directory: ${zabbix_server.pid_dir}"
   file: path=${zabbix_server.pid_dir} group=${zabbix_server.sys_group} owner=${zabbix_server.sys_user} mode=0755 state=directory
-  when_boolean: ${with_server}
+  when_boolean: ${with_zabbix_server}
   tags:
     - zabbix_server
 
 # Create Zabbix server log directory
 - name: "Create Zabbix server log directory: ${zabbix_server.log_dir}"
   file: path=${zabbix_server.log_dir} group=${zabbix_server.sys_group} owner=${zabbix_server.sys_user} mode=0755 state=directory
-  when_boolean: ${with_server}
+  when_boolean: ${with_zabbix_server}
   tags:
     - zabbix_server
 
 # Create Zabbix server log file
 - name: "Create Zabbix server logfile: ${zabbix_server.log_file}"
   command: touch ${zabbix_server.log_file}
-  when_boolean: ${with_server}
+  when_boolean: ${with_zabbix_server}
   tags:
     - zabbix_server
 
 # Ensure correct permissions on Zabbix server logfile
 - name: "Ensure correct permissions on Zabbix server logfile: ${zabbix_server.log_file}"
   file: path=${zabbix_server.log_file} owner=${zabbix_server.sys_user} group=${zabbix_server.sys_group} mode=0600 state=file
-  when_boolean: ${with_server}
+  when_boolean: ${with_zabbix_server}
   tags:
     - zabbix_server
 
 # Trigger Zabbix server restart
 - name: "Trigger Zabbix server restart"
   command: echo
-  only_if: "${with_server} and '${server_installed.stdout}' == '0'"
+  only_if: "${with_zabbix_server} and '${server_installed.stdout}' == '0'"
   notify:
     - "Restart Zabbix server"
   tags:
@@ -99,6 +99,6 @@
 # Ensure Zabbix server is running
 - name: "Ensure Zabbix server is running"
   service: name=${zabbix_server.name} state=started
-  when_boolean: ${with_server}
+  when_boolean: ${with_zabbix_server}
   tags:
     - zabbix_server
