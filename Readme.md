@@ -15,6 +15,8 @@ Everything is documented on the [Ansible](http://ansible.cc/docs/gettingstarted.
 
 Playbook tested on *Debian-7.0-b4-amd64*, probably works on other Debian versions too. Heavily depends on *apt*, sorry CentOS users...
 
+Any Ansible version > 0.9 should work...
+
 ## Usage
 
 ### Get the code
