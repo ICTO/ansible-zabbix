@@ -1,3 +1,5 @@
 ---
 # General Zabbix variables
-tmp_dir: /tmp
+zabbix:
+  debian_repo: 'http://ftp.de.debian.org/debian/pool/main/z/zabbix/'
+  tmp_dir: /tmp

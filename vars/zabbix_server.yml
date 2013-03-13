@@ -1,19 +1,23 @@
 ---
 # Zabbix server variables
 zabbix_server:
-  debian_package: 'zabbix-server-mysql-2.0.4-1_amd64.deb'
-  name: 'zabbix_server'
-  pid_dir: '/var/run/zabbix-server'
-  pid_file: '/var/run/zabbix-server/zabbix_server.pid'
-  log_dir: '/var/log/zabbix-server'
-  log_file: '/var/log/zabbix-server/zabbix_server.log'
-  conf_dir: '/opt/zabbix/etc/'
-  sys_user: 'zabbixsrv'
-  sys_group: 'zabbixsrv'
-  db_name: zabbix
-  db_user: zabbix
-  db_pass: zabbix
-  sql_files:
-    - 'schema.sql'
-    - 'images.sql'
-    - 'data.sql'
+  debian_package: 'zabbix-server-mysql_2.0.5+dfsg-1_amd64.deb'
+  name: 'zabbix-server'
+  db:
+    name: zabbix
+    user: zabbix
+    pass: zabbix
+    sql_files:
+      - 'schema'
+      - 'images'
+      - 'data'
+  dependencies:
+    - 'fping'
+    - 'libiksemel3'
+    - 'libopenipmi0'
+    - 'libperl5.14'
+    - 'libsensors4'
+    - 'libsnmp-base'
+    - 'libsnmp15'
+    - 'libmysqlclient18'
+    - 'mysql-common'

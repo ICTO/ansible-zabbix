@@ -1,36 +1,44 @@
 ---
 # Install Zabbix php webfrontend dependencies
 - name: "Install Zabbix PHP frontend dependencies"
-  apt: pkg=${item} state=installed update-cache=yes
+  action: ${ansible_pkg_mgr} pkg=${item} state=installed update-cache=yes
   when_boolean: ${with_zabbix_web}
   with_items: ${zabbix_web.dependencies}
   tags:
     - zabbix_web
 
-# Transfer Zabbix web deb file
-- name: "Transfer Zabbix web package: ${zabbix_web.debian_package} to ${tmp_dir}"
-  copy: src=files/deb/${zabbix_web.debian_package} dest=${tmp_dir} owner=root group=root mode=0644
+# Fetch .deb file from repository
+- name: "Fetch Debian package: ${zabbix_web.debian_package}"
+  action: get_url url=${zabbix.debian_repo}/${zabbix_web.debian_package} dest=${zabbix.tmp_dir} mode=0440 owner=root group=root
   when_boolean: ${with_zabbix_web}
   tags:
     - zabbix_web
 
 # Install Zabbix web deb file
 - name: "Install Zabbix PHP frontend: ${zabbix_web.debian_package}"
-  shell: "dpkg -i -E ${tmp_dir}/${zabbix_web.debian_package} 2>&1 | grep skipping | wc -l"
+  action: shell dpkg -i -E ${zabbix.tmp_dir}/${zabbix_web.debian_package} 2>&1 | grep skipping | wc -l
   when_boolean: ${with_zabbix_web}
+  tags:
+    - zabbix_web
+
+- name: "Link Apache config file"
+  action: file src=/usr/share/doc/zabbix-frontend-php/examples/apache.conf dest=/etc/apache2/conf.d/zabbix state=link
+  when_boolean: ${with_zabbix_web}
+  notify:
+    - "Restart Apache"
   tags:
     - zabbix_web
 
 # Override defaults from Zabbix server config file
 - name: "Put Zabbix web frontend config in place"
-  template: src=templates/zabbix_conf.php.j2 dest=${zabbix_web.root}/conf/zabbix.conf.php owner=${zabbix_web.sys_user} group=${zabbix_web.sys_group} mode=0640
+  action: template src=templates/zabbix_conf.php.j2 dest=/etc/zabbix/zabbix.conf.php owner=${zabbix_web.www_user} group=${zabbix_web.www_group} mode=0640
   when_boolean: ${with_zabbix_web}
   tags:
     - zabbix_web
 
 # Manage Zabbix PHP settings
 - name: "Put custom Zabbix PHP settings in include dir"
-  copy: src=files/conf/zabbix.ini dest=/etc/php5/apache2/conf.d/zabbix.ini owner=root group=root mode=0644
+  action: copy src=files/conf/zabbix.ini dest=/etc/php5/apache2/conf.d/zabbix.ini owner=root group=root mode=0644
   when_boolean: ${with_zabbix_web}
   notify:
     - "Restart Apache"
