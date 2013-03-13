@@ -1,48 +1,29 @@
 ---
 # Install MySQL server
 - name: "Install MySQL server"
-  apt: pkg=mysql-server state=installed update-cache=yes
+  action: ${ansible_pkg_mgr} pkg=mysql-server state=installed update-cache=yes
   when_boolean: ${with_zabbix_server}
   tags:
     - database
 
 # Install MySQLdb Python package, mandatory to manage MySQL with ansible
 - name: "Install MySQLdb python package"
-  apt: pkg=python-mysqldb state=installed update-cache=yes
+  action: ${ansible_pkg_mgr} pkg=python-mysqldb state=installed update-cache=yes
   when_boolean: ${with_zabbix_server}
   tags:
     - database
 
 # Manage Zabbix database
-- name: "Manage Zabbix db: ${zabbix_server.db_name}"
-  mysql_db: encoding=utf8 name=${zabbix_server.db_name} state=present
+- name: "Manage Zabbix db: ${zabbix_server.db.name}"
+  action: mysql_db encoding=utf8 name=${zabbix_server.db.name} state=present
   when_boolean: ${with_zabbix_server}
   register: create_db
   tags:
     - database
 
 # Manage Zabbix database user
-- name: "Manage Zabbix db-user: ${zabbix_server.db_user}"
-  mysql_user: name=${zabbix_server.db_user} password=${zabbix_server.db_pass} priv=${zabbix_server.db_name}.*:ALL state=present
+- name: "Manage Zabbix db-user: ${zabbix_server.db.user}"
+  action: mysql_user name=${zabbix_server.db.user} password=${zabbix_server.db.pass} priv=${zabbix_server.db.name}.*:ALL state=present
   when_boolean: ${with_zabbix_server}
-  tags:
-    - database
-
-# Transfer and execute installation SQL files 
-# when database is created, ignore otherwise.
-
-# Copy Zabbix sql files
-- name: "Transfer Zabbix SQL files"
-  copy: src=files/db/${item} dest=${tmp_dir} owner=root group=root mode=0644
-  with_items: ${zabbix_server.sql_files}
-  when_boolean: "${with_zabbix_server} and ${create_db.changed}"
-  tags:
-    - database
-
-# Execute db installation scripts
-- name: "Execute Zabbix SQL files"
-  shell: mysql -u${zabbix_server.db_user} -p${zabbix_server.db_pass} ${zabbix_server.db_name} < ${item} chdir=${tmp_dir}
-  with_items: ${zabbix_server.sql_files}
-  when_boolean: "${with_zabbix_server} and ${create_db.changed}"
   tags:
     - database

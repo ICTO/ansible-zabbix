@@ -36,8 +36,6 @@
 # Default:
 # LogFile=
 
-LogFile={{ zabbix_server.log_file }}
-
 ### Option: LogFileSize
 #	Maximum size of log file in MB.
 #	0 - disable automatic log rotation.
@@ -67,8 +65,6 @@ LogFile={{ zabbix_server.log_file }}
 # Default:
 # PidFile=/tmp/zabbix_server.pid
 
-PidFile={{ zabbix_server.pid_file }}
-
 ### Option: DBHost
 #	Database host name.
 #	If set to localhost, socket is used for MySQL.
@@ -86,7 +82,7 @@ PidFile={{ zabbix_server.pid_file }}
 # Default:
 # DBName=
 
-DBName={{ zabbix_server.db_name }}
+DBName={{ zabbix_server.db.name }}
 
 ### Option: DBSchema
 #	Schema name. Used for IBM DB2.
@@ -102,7 +98,7 @@ DBName={{ zabbix_server.db_name }}
 # Default:
 # DBUser=
 
-DBUser={{ zabbix_server.db_user }}
+DBUser={{ zabbix_server.db.user }}
 
 ### Option: DBPassword
 #	Database password. Ignored for SQLite.
@@ -112,7 +108,7 @@ DBUser={{ zabbix_server.db_user }}
 # Default:
 # DBPassword=
 
-DBPassword={{ zabbix_server.db_pass }}
+DBPassword={{ zabbix_server.db.pass }}
 
 ### Option: DBSocket
 #	Path to MySQL socket.

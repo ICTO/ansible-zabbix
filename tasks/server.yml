@@ -1,104 +1,72 @@
 ---
 # Prepare database setup
 - include: tasks/db.yml
-
-# Install MySQL clientlib dev package (needed by zabbix-server-mysql)
-- name: "Install MySQL clientlib dev package"
-  apt: pkg=libmysqlclient-dev state=installed update-cache=yes
   when_boolean: ${with_zabbix_server}
+
+# Install Zabbix server dependencies
+- name: "Install Zabbix server dependencies"
+  action: ${ansible_pkg_mgr} pkg=${item} state=installed update-cache=yes
+  when_boolean: ${with_zabbix_server}
+  with_items: ${zabbix_server.dependencies}
   tags:
     - zabbix_server
 
-# Create Zabbix server system group
-- name: "Create Zabbix server system group: ${zabbix_server.sys_group}"
-  group: name=${zabbix_server.sys_group} state=present system=yes
-  when_boolean: ${with_zabbix_server}
-  tags:
-    - zabbix_server
-
-# Create Zabbix server system user
-- name: "Create Zabbix server system user: ${zabbix_server.sys_user}"
-  user: name=${zabbix_server.sys_user} group=${zabbix_server.sys_group} state=present system=yes
-  when_boolean: ${with_zabbix_server}
-  tags:
-    - zabbix_server
-
-# Transfer Zabbix server deb file
-- name: "Transfer Zabbix server package: ${zabbix_server.debian_package} to ${tmp_dir}"
-  copy: src=files/deb/${zabbix_server.debian_package} dest=${tmp_dir} owner=root group=root mode=0644
+# Fetch .deb file from repository
+- name: "Fetch Debian package: ${zabbix_server.debian_package}"
+  action: get_url url=${zabbix.debian_repo}/${zabbix_server.debian_package} dest=${zabbix.tmp_dir} mode=0440 owner=root group=root
   when_boolean: ${with_zabbix_server}
   tags:
     - zabbix_server
 
 # Install Zabbix server deb file
 - name: "Install Zabbix server: ${zabbix_server.debian_package}"
-  shell: "dpkg -i -E ${tmp_dir}/${zabbix_server.debian_package} 2>&1 | grep skipping | wc -l"
+  action: shell dpkg -i -E ${zabbix.tmp_dir}/${zabbix_server.debian_package} 2>&1 | grep skipping | wc -l
   register: server_installed
   when_boolean: ${with_zabbix_server}
   tags:
     - zabbix_server
 
-# Install Zabbix server init script
-- name: "Install Zabbix agent init script"
-  template: src=templates/zabbix_server.j2 dest=/etc/init.d/zabbix_server owner=root group=root mode=0755
+# Execute db installation scripts
+- name: "Execute Zabbix SQL files"
+  action: shell zcat /usr/share/zabbix-server-mysql/${item}.sql.gz | mysql -u${zabbix_server.db.user} -p${zabbix_server.db.pass} ${zabbix_server.db.name}
+  when_boolean: "${with_zabbix_server} and ${create_db.changed}"
+  with_items: ${zabbix_server.db.sql_files}
+  tags:
+    - zabbix_server
+
+# Create Zabbix server include directory
+- name: "Create Zabbix server include directory"
+  action: file path=/etc/zabbix/zabbix_server.conf.d group=root owner=root mode=0750 state=directory
   when_boolean: ${with_zabbix_server}
   tags:
     - zabbix_server
 
-# Enable Zabbix server config include dir
-- name: "Enable Zabbix server config include dir"
-  lineinfile: dest=/opt/zabbix/etc/zabbix_server.conf state=present regexp="^Include=/opt/zabbix/etc/zabbix_server.conf.d/" insertafter="^# Include=/usr/local/etc/zabbix_server.conf.d/" line="Include=/opt/zabbix/etc/zabbix_server.conf.d/"
+# Enable Zabbix server include directory
+- name: "Enable Zabbix server include directory"
+  action: lineinfile dest=/etc/zabbix/zabbix_server.conf regexp="^.*Include=/etc/zabbix/zabbix_server.conf.d/" line="Include=/etc/zabbix/zabbix_server.conf.d/"
+  when_boolean: ${with_zabbix_server}
+  tags:
+    - zabbix_server
+
+# Enable Zabbix server in /etc/default/zabbix-server
+- name: "Enable Zabbix server in /etc/default/zabbix-server"
+  action: lineinfile dest=/etc/default/zabbix-server regexp="^START=" line="START=yes"
   when_boolean: ${with_zabbix_server}
   tags:
     - zabbix_server
 
 # Override defaults from Zabbix server config file
 - name: "Put custom Zabbix server settings in include dir"
-  template: src=templates/zabbix_server.conf.j2 dest=/opt/zabbix/etc/zabbix_server.conf.d/icto.conf owner=${zabbix_server.sys_user} group=${zabbix_server.sys_group} mode=0640
-  when_boolean: ${with_zabbix_server}
-  tags:
-    - zabbix_server
-
-# Create Zabbix server pid directory
-- name: "Create Zabbix server pid directory: ${zabbix_server.pid_dir}"
-  file: path=${zabbix_server.pid_dir} group=${zabbix_server.sys_group} owner=${zabbix_server.sys_user} mode=0755 state=directory
-  when_boolean: ${with_zabbix_server}
-  tags:
-    - zabbix_server
-
-# Create Zabbix server log directory
-- name: "Create Zabbix server log directory: ${zabbix_server.log_dir}"
-  file: path=${zabbix_server.log_dir} group=${zabbix_server.sys_group} owner=${zabbix_server.sys_user} mode=0755 state=directory
-  when_boolean: ${with_zabbix_server}
-  tags:
-    - zabbix_server
-
-# Create Zabbix server log file
-- name: "Create Zabbix server logfile: ${zabbix_server.log_file}"
-  command: touch ${zabbix_server.log_file}
-  when_boolean: ${with_zabbix_server}
-  tags:
-    - zabbix_server
-
-# Ensure correct permissions on Zabbix server logfile
-- name: "Ensure correct permissions on Zabbix server logfile: ${zabbix_server.log_file}"
-  file: path=${zabbix_server.log_file} owner=${zabbix_server.sys_user} group=${zabbix_server.sys_group} mode=0600 state=file
-  when_boolean: ${with_zabbix_server}
-  tags:
-    - zabbix_server
-
-# Trigger Zabbix server restart
-- name: "Trigger Zabbix server restart"
-  command: echo
-  only_if: "${with_zabbix_server} and '${server_installed.stdout}' == '0'"
+  action: template src=templates/zabbix_server.conf.j2 dest=/etc/zabbix/zabbix_server.conf.d/custom.conf owner=root group=root mode=0640
   notify:
     - "Restart Zabbix server"
+  when_boolean: ${with_zabbix_server}
   tags:
     - zabbix_server
 
 # Ensure Zabbix server is running
 - name: "Ensure Zabbix server is running"
-  service: name=${zabbix_server.name} state=started
+  action: service name=${zabbix_server.name} state=started
   when_boolean: ${with_zabbix_server}
   tags:
     - zabbix_server

@@ -1,11 +1,12 @@
 ---
 zabbix_web:
-  debian_package: 'zabbix-frontend-php-2.0.4-1_amd64.deb'
-  sys_user: 'www-data'
-  sys_group: 'www-data'
+  debian_package: 'zabbix-frontend-php_2.0.5+dfsg-1_all.deb'
+  www_user: 'www-data'
+  www_group: 'www-data'
   dependencies: 
     - 'apache2'
+    - 'php5'
     - 'libapache2-mod-php5'
     - 'php5-mysql'
     - 'php5-gd'
-  root: '/var/www/zabbix'
+    - 'ttf-dejavu-core'
