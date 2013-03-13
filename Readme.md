@@ -71,7 +71,7 @@ with
 with_zabbix_agent: true
 with_zabbix_server: true
 with_zabbix_web: true
-
+with_zabbix_server_ip: 127.0.0.1
 ```
 
 ### Run the playbook
@@ -85,131 +85,108 @@ $ ansible-playbook -k -i ansible.host ansible-zabbix/setup.yml --extra-vars="use
 ### Example output
 
 ```
-PLAY [zabbix] ********************* 
+SSH password: 
+
+PLAY [Zabbix playbook] ********************* 
 
 GATHERING FACTS ********************* 
 ok: [127.0.0.1]
 
-TASK: [Create Zabbix agent system group: zabbix] ********************* 
+TASK: [Install Zabbix agent dependencies] ********************* 
+ok: [127.0.0.1] => (item=libcurl3-gnutls)
+
+TASK: [Fetch Debian package: zabbix-agent_2.0.5+dfsg-1_amd64.deb] ********************* 
 ok: [127.0.0.1]
 
-TASK: [Create Zabbix agent system user: zabbix] ********************* 
-ok: [127.0.0.1]
-
-TASK: [Transfer Zabbix agent package: zabbix-agent-2.0.4-1_amd64.deb to /tmp] ********************* 
-ok: [127.0.0.1]
-
-TASK: [Install Zabbix agent: zabbix-agent-2.0.4-1_amd64.deb] ********************* 
+TASK: [Install Zabbix agent: zabbix-agent_2.0.5+dfsg-1_amd64.deb] ********************* 
 changed: [127.0.0.1]
-
-TASK: [Install Zabbix agent init script] ********************* 
-ok: [127.0.0.1]
-
-TASK: [Enable Zabbix agent config include dir] ********************* 
-ok: [127.0.0.1]
 
 TASK: [Put custom Zabbix agent settings in include dir] ********************* 
-ok: [127.0.0.1]
-
-TASK: [Create Zabbix agent pid directory: /var/run/zabbix-agent] ********************* 
-ok: [127.0.0.1]
-
-TASK: [Create Zabbix agent log directory: /var/log/zabbix-agent] ********************* 
-ok: [127.0.0.1]
-
-TASK: [Create Zabbix agent logfile: /var/log/zabbix-agent/zabbix_agentd.log] ********************* 
 changed: [127.0.0.1]
-
-TASK: [Ensure correct permissions on Zabbix agent logfile: /var/log/zabbix-agent/zabbix_agentd.log] ********************* 
-ok: [127.0.0.1]
-
-TASK: [Trigger Zabbix agent restart] ********************* 
-skipping: [127.0.0.1]
 
 TASK: [Ensure Zabbix agent is running] ********************* 
 ok: [127.0.0.1]
 
 TASK: [Install MySQL server] ********************* 
-skipping: [127.0.0.1]
+ok: [127.0.0.1]
 
 TASK: [Install MySQLdb python package] ********************* 
-skipping: [127.0.0.1]
+ok: [127.0.0.1]
 
 TASK: [Manage Zabbix db: zabbix] ********************* 
-skipping: [127.0.0.1]
+ok: [127.0.0.1]
 
 TASK: [Manage Zabbix db-user: zabbix] ********************* 
-skipping: [127.0.0.1]
+ok: [127.0.0.1]
 
-TASK: [Transfer Zabbix SQL files] ********************* 
-skipping: [127.0.0.1] => (item=schema.sql)
-skipping: [127.0.0.1] => (item=images.sql)
-skipping: [127.0.0.1] => (item=data.sql)
+TASK: [Install Zabbix server dependencies] ********************* 
+ok: [127.0.0.1] => (item=fping)
+ok: [127.0.0.1] => (item=libiksemel3)
+ok: [127.0.0.1] => (item=libopenipmi0)
+ok: [127.0.0.1] => (item=libperl5.14)
+ok: [127.0.0.1] => (item=libsensors4)
+ok: [127.0.0.1] => (item=libsnmp-base)
+ok: [127.0.0.1] => (item=libsnmp15)
+ok: [127.0.0.1] => (item=libmysqlclient18)
+ok: [127.0.0.1] => (item=mysql-common)
+
+TASK: [Fetch Debian package: zabbix-server-mysql_2.0.5+dfsg-1_amd64.deb] ********************* 
+ok: [127.0.0.1]
+
+TASK: [Install Zabbix server: zabbix-server-mysql_2.0.5+dfsg-1_amd64.deb] ********************* 
+changed: [127.0.0.1]
 
 TASK: [Execute Zabbix SQL files] ********************* 
-skipping: [127.0.0.1] => (item=schema.sql)
-skipping: [127.0.0.1] => (item=images.sql)
-skipping: [127.0.0.1] => (item=data.sql)
+skipping: [127.0.0.1] => (item=schema)
+skipping: [127.0.0.1] => (item=images)
+skipping: [127.0.0.1] => (item=data)
 
-TASK: [Install MySQL clientlib dev package] ********************* 
-skipping: [127.0.0.1]
+TASK: [Create Zabbix server include directory] ********************* 
+ok: [127.0.0.1]
 
-TASK: [Create Zabbix server system group: zabbixsrv] ********************* 
-skipping: [127.0.0.1]
+TASK: [Enable Zabbix server include directory] ********************* 
+ok: [127.0.0.1]
 
-TASK: [Create Zabbix server system user: zabbixsrv] ********************* 
-skipping: [127.0.0.1]
-
-TASK: [Transfer Zabbix server package: zabbix-server-mysql-2.0.4-1_amd64.deb to /tmp] ********************* 
-skipping: [127.0.0.1]
-
-TASK: [Install Zabbix server: zabbix-server-mysql-2.0.4-1_amd64.deb] ********************* 
-skipping: [127.0.0.1]
-
-TASK: [Install Zabbix agent init script] ********************* 
-skipping: [127.0.0.1]
-
-TASK: [Enable Zabbix server config include dir] ********************* 
-skipping: [127.0.0.1]
+TASK: [Enable Zabbix server in /etc/default/zabbix-server] ********************* 
+ok: [127.0.0.1]
 
 TASK: [Put custom Zabbix server settings in include dir] ********************* 
-skipping: [127.0.0.1]
-
-TASK: [Create Zabbix server pid directory: /var/run/zabbix-server] ********************* 
-skipping: [127.0.0.1]
-
-TASK: [Create Zabbix server log directory: /var/log/zabbix-server] ********************* 
-skipping: [127.0.0.1]
-
-TASK: [Create Zabbix server logfile: /var/log/zabbix-server/zabbix_server.log] ********************* 
-skipping: [127.0.0.1]
-
-TASK: [Ensure correct permissions on Zabbix server logfile: /var/log/zabbix-server/zabbix_server.log] ********************* 
-skipping: [127.0.0.1]
-
-TASK: [Trigger Zabbix server restart] ********************* 
-skipping: [127.0.0.1]
+changed: [127.0.0.1]
 
 TASK: [Ensure Zabbix server is running] ********************* 
-skipping: [127.0.0.1]
+ok: [127.0.0.1]
 
 TASK: [Install Zabbix PHP frontend dependencies] ********************* 
-skipping: [127.0.0.1] => (item=apache2,libapache2-mod-php5,php5-mysql,php5-gd)
+ok: [127.0.0.1] => (item=apache2)
+ok: [127.0.0.1] => (item=php5)
+ok: [127.0.0.1] => (item=libapache2-mod-php5)
+ok: [127.0.0.1] => (item=php5-mysql)
+ok: [127.0.0.1] => (item=php5-gd)
+ok: [127.0.0.1] => (item=ttf-dejavu-core)
 
-TASK: [Transfer Zabbix web package: zabbix-frontend-php-2.0.4-1_amd64.deb to /tmp] ********************* 
-skipping: [127.0.0.1]
+TASK: [Fetch Debian package: zabbix-frontend-php_2.0.5+dfsg-1_all.deb] ********************* 
+ok: [127.0.0.1]
 
-TASK: [Install Zabbix PHP frontend: zabbix-frontend-php-2.0.4-1_amd64.deb] ********************* 
-skipping: [127.0.0.1]
+TASK: [Install Zabbix PHP frontend: zabbix-frontend-php_2.0.5+dfsg-1_all.deb] ********************* 
+changed: [127.0.0.1]
+
+TASK: [Link Apache config file] ********************* 
+ok: [127.0.0.1]
 
 TASK: [Put Zabbix web frontend config in place] ********************* 
-skipping: [127.0.0.1]
+ok: [127.0.0.1]
 
 TASK: [Put custom Zabbix PHP settings in include dir] ********************* 
-skipping: [127.0.0.1]
+ok: [127.0.0.1]
+
+NOTIFIED: [Restart Zabbix agent] ********************* 
+changed: [127.0.0.1]
+
+NOTIFIED: [Restart Zabbix server] ********************* 
+changed: [127.0.0.1]
 
 PLAY RECAP ********************* 
-127.0.0.1                   : ok=15   changed=2    unreachable=0    failed=0    
+127.0.0.1                   : ok=27   changed=7    unreachable=0    failed=0    
 ```
 
 ## Docs and contact
