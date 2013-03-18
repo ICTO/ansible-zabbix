@@ -10,6 +10,7 @@
     - vars/zabbix_agent.yml
     - vars/zabbix_server.yml
     - vars/zabbix_web.yml
+    - vars/zabbix_java.yml
 
   tasks:
     - include: tasks/setup.yml

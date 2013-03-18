@@ -21,3 +21,7 @@ zabbix_server:
     - 'libsnmp15'
     - 'libmysqlclient18'
     - 'mysql-common'
+    - 'libiodbc2'
+    - 'libssl1.0.0'
+    - 'libssl-dev'
+    - 'dbconfig-common' 

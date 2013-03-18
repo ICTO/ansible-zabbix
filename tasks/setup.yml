@@ -14,3 +14,7 @@
 # Install the Zabbix webfronted using Apache
 - include: tasks/web.yml
   when_boolean: ${with_zabbix_web}
+
+# Install the Zabbix java gateway
+- include: tasks/java.yml
+  when_boolean: ${with_zabbix_java}
