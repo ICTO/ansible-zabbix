@@ -20,7 +20,7 @@
 
 # Install Zabbix server deb file
 - name: "Install Zabbix server: ${zabbix_server.debian_package}"
-  action: shell dpkg -i -E ${zabbix.tmp_dir}/${zabbix_server.debian_package} 2>&1 | grep skipping | wc -l
+  action: shell DEBIAN_FRONTEND=noninteractive dpkg -i -E ${zabbix.tmp_dir}/${zabbix_server.debian_package} 2>&1 | grep skipping | wc -l
   register: server_installed
   when_boolean: ${with_zabbix_server}
   tags:
