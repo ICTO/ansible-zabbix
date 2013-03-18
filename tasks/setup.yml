@@ -1,4 +1,7 @@
 ---
+# Execute some tests first
+- include: tasks/checks.yml
+
 # Add Zabbix repository
 - include: tasks/repo.yml
   when_boolean: ${with_zabbix_repo}
