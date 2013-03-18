@@ -1,0 +1,24 @@
+---
+#install gpg key
+- name: "Get and install zabbix gpg key"
+  action: shell /usr/bin/apt-key adv --keyserver keys.gnupg.net --recv-keys 8FF57A0425FFD7E7
+  tags:
+    - zabbix_repo
+
+#Make sure apt_add_repository is installed
+- name: "install python-software-properties"
+  action: apt pkg=python-software-properties state=installed
+  tags:
+    - zabbix_repo
+
+#add repository to sources
+- name: "add repo to sources"
+  action: apt_repository repo='deb http://repo.zabbixzone.com/debian squeeze main'
+  tags:
+    - zabbix_repo
+
+#update cache
+- name: "update cache"
+  action: apt update_cache=yes
+  tags:
+    - zabbix_repo

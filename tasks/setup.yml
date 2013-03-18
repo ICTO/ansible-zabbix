@@ -1,4 +1,8 @@
 ---
+# Add Zabbix repository
+- include: tasks/repo.yml
+  when_boolean: ${with_zabbix_repo}
+
 # Install the Zabbix agent
 - include: tasks/agent.yml
   when_boolean: ${with_zabbix_agent}
