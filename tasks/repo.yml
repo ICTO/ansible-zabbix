@@ -1,7 +1,7 @@
 ---
-#install gpg key
+# Install gpg key directly from Zabbixzone repo, keys.gnupg.net seems to timeout frequently...
 - name: "Get and install zabbix gpg key"
-  action: shell /usr/bin/apt-key adv --keyserver keys.gnupg.net --recv-keys 8FF57A0425FFD7E7
+  action:  apt_key url=http://repo.zabbixzone.com/debian/zabbixzone.gpg.key state=present
   tags:
     - zabbix_repo
 
