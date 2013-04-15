@@ -3,7 +3,7 @@
 zabbix_java:
   debian_repo: 'http://repo.zabbix.com/zabbix/2.0/debian/pool/main/z/zabbix/'
   debian_package: 'zabbix-java-gateway_2.0.5-1_amd64.deb'
-  #name: 'zabbix-agent'
+  name: 'zabbix-java-gateway'
   dependencies: 
   - 'openjdk-6-jre'
   # Other dependencies been taken care of by openjdk-6-jre...

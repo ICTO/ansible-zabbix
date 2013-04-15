@@ -1,0 +1,3 @@
+---
+- name: "Restart Zabbix Java Gateway"
+  action: service name=${zabbix_java.name} state=restarted
