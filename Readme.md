@@ -68,10 +68,21 @@ with
 
 ```
 ---
+# Install Zabbix agent?
 with_zabbix_agent: true
+
+# Install Zabbix server?
 with_zabbix_server: true
+mysql:
+  admin_user: root
+  admin_password: root
+  host: 127.0.0.1
+
+# Install Zabbix web frontend?
 with_zabbix_web: true
-with_zabbix_server_ip: 127.0.0.1
+
+# Install Zabbix Java Gateway?
+with_zabbix_java: true
 ```
 
 ### Run the playbook
