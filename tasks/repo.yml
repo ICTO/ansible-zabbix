@@ -1,10 +1,4 @@
 ---
-# Install gpg key directly from Zabbixzone repo, keys.gnupg.net seems to timeout frequently...
-- name: "Get and install zabbix gpg key"
-  action:  apt_key url=http://repo.zabbixzone.com/debian/zabbixzone.gpg.key state=present
-  tags:
-    - zabbix_repo
-
 #Make sure apt_add_repository is installed
 - name: "install python-software-properties"
   action: apt pkg=python-software-properties state=installed
@@ -12,8 +6,8 @@
     - zabbix_repo
 
 #add repository to sources
-- name: "add repo to sources"
-  action: apt_repository repo='deb http://repo.zabbixzone.com/debian squeeze main'
+- name: "add wheezy backports repo to sources"
+  action: apt_repository repo='deb http://be.mirror.eurid.eu/debian-backports/ wheezy-backports main'
   tags:
     - zabbix_repo
 
