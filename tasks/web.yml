@@ -7,16 +7,9 @@
   tags:
     - zabbix_web
 
-# Fetch .deb file from repository
-- name: "Fetch Debian package: ${zabbix_web.debian_package}"
-  action: get_url url=${zabbix.debian_repo}/${zabbix_web.debian_package} dest=${zabbix.tmp_dir} mode=0440 owner=root group=root
-  when_boolean: ${with_zabbix_web}
-  tags:
-    - zabbix_web
-
 # Install Zabbix web deb file
-- name: "Install Zabbix PHP frontend: ${zabbix_web.debian_package}"
-  action: shell dpkg -i -E ${zabbix.tmp_dir}/${zabbix_web.debian_package} 2>&1 | grep skipping | wc -l
+- name: "Install Zabbix PHP frontend"
+  action: ${ansible_pkg_mgr} pkg=zabbix-frontend-php state=installed update-cache=yes
   when_boolean: ${with_zabbix_web}
   tags:
     - zabbix_web

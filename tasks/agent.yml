@@ -7,17 +7,9 @@
   tags:
     - zabbix_agent
 
-# Fetch .deb file from repository
-- name: "Fetch Debian package: ${zabbix_agent.debian_package}"
-  action: get_url url=${zabbix.debian_repo}/${zabbix_agent.debian_package} dest=${zabbix.tmp_dir} mode=0440 owner=root group=root
-  when_boolean: ${with_zabbix_agent}
-  tags:
-    - zabbix_agent
-
 # Install Zabbix agent deb file
-- name: "Install Zabbix agent: ${zabbix_agent.debian_package}"
-  action: shell dpkg -i -E ${zabbix.tmp_dir}/${zabbix_agent.debian_package} 2>&1 | grep skipping | wc -l
-  register: agent_installed
+- name: "Install Zabbix agent"
+  action: ${ansible_pkg_mgr} pkg=zabbix-agent state=installed update-cache=yes
   when_boolean: ${with_zabbix_agent}
   tags:
     - zabbix_agent

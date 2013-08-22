@@ -15,11 +15,11 @@ Everything you should know about Ansible is documented on the [Ansible](http://a
 
 #### Debian wheezy
 
-Playbook tested on *Debian-7.0-b4-amd64*, probably works on other Debian versions too. Heavily depends on *apt*, sorry CentOS users...
+Playbook tested on *Debian-7.1*, probably works on other Debian versions too. Heavily depends on *apt*, sorry CentOS users...
 
-#### Ansible >= 1.0
+#### Ansible >= 1.2
 
-Any Ansible version >= 1.0 should work. If not, please use the issue tracker to report any bugs.
+Any Ansible version >= 1.2 should work. If not, please use the issue tracker to report any bugs.
 
 ## Usage
 

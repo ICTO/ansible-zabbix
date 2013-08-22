@@ -1,23 +1,22 @@
 ---
 # Execute some tests first
-- include: tasks/checks.yml
+- include: checks.yml
 
 # Add Zabbix repository
-- include: tasks/repo.yml
-  when_boolean: ${with_zabbix_repo}
+- include: repo.yml
 
 # Install the Zabbix agent
-- include: tasks/agent.yml
+- include: agent.yml
   when_boolean: ${with_zabbix_agent}
 
 # Install the Zabbix server
-- include: tasks/server.yml
+- include: server.yml
   when_boolean: ${with_zabbix_server}
 
 # Install the Zabbix webfronted using Apache
-- include: tasks/web.yml
+- include: web.yml
   when_boolean: ${with_zabbix_web}
 
 # Install the Zabbix java gateway
-- include: tasks/java.yml
+- include: java.yml
   when_boolean: ${with_zabbix_java}

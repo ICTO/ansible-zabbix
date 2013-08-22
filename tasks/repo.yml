@@ -7,7 +7,7 @@
 
 #add repository to sources
 - name: "add wheezy backports repo to sources"
-  action: apt_repository repo='deb http://be.mirror.eurid.eu/debian-backports/ wheezy-backports main'
+  action: apt_repository repo='deb http://mirror.as35701.net/debian/ wheezy-backports main'
   tags:
     - zabbix_repo
 
