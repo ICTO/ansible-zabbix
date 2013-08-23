@@ -12,7 +12,7 @@ $DB['PASSWORD'] = '{{ zabbix_server.db.pass }}';
 // SCHEMA is relevant only for IBM_DB2 database
 $DB['SCHEMA'] = '';
 
-$ZBX_SERVER      = 'localhost';
+$ZBX_SERVER      = '{{ with_zabbix_server_ip }}';
 $ZBX_SERVER_PORT = '10051';
 $ZBX_SERVER_NAME = '';
 

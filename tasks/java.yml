@@ -31,9 +31,9 @@
 #   tags:
 #     - zabbix_java
 
-# # Ensure Zabbix java is running
-# - name: "Ensure Zabbix java is running"
-#   action: service name=${zabbix_java.name} state=started
-#   when_boolean: ${with_zabbix_java}
-#   tags:
-#     - zabbix_java
+# Ensure Zabbix Java Gateway is running
+- name: "Ensure Zabbix Java Gateway is running"
+  action: service name=${zabbix_java.name} state=started
+  when_boolean: ${with_zabbix_java}
+  tags:
+    - zabbix_java

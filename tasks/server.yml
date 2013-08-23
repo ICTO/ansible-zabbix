@@ -1,6 +1,6 @@
 ---
 # Prepare database setup
-- include: tasks/db.yml
+- include: db.yml
   when_boolean: ${with_zabbix_server}
 
 # Install Zabbix server dependencies
@@ -10,17 +10,9 @@
   with_items: ${zabbix_server.dependencies}
   tags:
     - zabbix_server
-
-# Fetch .deb file from repository
-- name: "Fetch Debian package: ${zabbix_server.debian_package}"
-  action: get_url url=${zabbix.debian_repo}/${zabbix_server.debian_package} dest=${zabbix.tmp_dir} mode=0440 owner=root group=root
-  when_boolean: ${with_zabbix_server}
-  tags:
-    - zabbix_server
-
 # Install Zabbix server deb file
-- name: "Install Zabbix server: ${zabbix_server.debian_package}"
-  action: shell DEBIAN_FRONTEND=noninteractive dpkg -i -E ${zabbix.tmp_dir}/${zabbix_server.debian_package} 2>&1 | grep skipping | wc -l
+- name: "Install Zabbix server"
+  action: ${ansible_pkg_mgr} pkg=zabbix-server-mysql state=installed update-cache=yes
   register: server_installed
   when_boolean: ${with_zabbix_server}
   tags:
