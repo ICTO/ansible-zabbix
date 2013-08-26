@@ -4,6 +4,7 @@
 
 # Add Zabbix repository
 - include: repo.yml
+  when: ansible_distribution == "Debian"
 
 # Install the Zabbix agent
 - include: agent.yml

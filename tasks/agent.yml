@@ -17,7 +17,16 @@
 # Override defaults from Zabbix agent config file
 - name: "Put custom Zabbix agent settings in include dir"
   action: template src=templates/zabbix_agentd.conf.j2 dest=/etc/zabbix/zabbix_agentd.conf.d/custom.conf owner=root group=root mode=0640
-  when_boolean: ${with_zabbix_agent}
+  when: with_zabbix_agent and ansible_distribution == "Debian"
+  notify:
+    - "Restart Zabbix agent"
+  tags:
+    - zabbix_agent
+
+# Override defaults from Zabbix agent config file
+- name: "Put custom Zabbix agent settings in include dir"
+  action: template src=templates/zabbix_agentd.conf_ubuntu.j2 dest=/etc/zabbix/zabbix_agentd.conf.d/custom.conf owner=root group=root mode=0640
+  when: with_zabbix_agent and ansible_distribution == "Ubuntu"
   notify:
     - "Restart Zabbix agent"
   tags:
@@ -25,7 +34,7 @@
 
 # Ensure Zabbix agent is running
 - name: "Ensure Zabbix agent is running"
-  action: service name=${zabbix_agent.name} state=started
+  action: service name=${zabbix_agent.name} state=restarted
   when_boolean: ${with_zabbix_agent}
   tags:
     - zabbix_agent
