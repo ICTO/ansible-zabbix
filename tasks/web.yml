@@ -27,7 +27,7 @@
 
 # Manage Zabbix PHP settings
 - name: "Put custom Zabbix PHP settings in include dir"
-  copy: src=files/conf/zabbix.ini dest=/etc/php5/apache2/conf.d/zabbix.ini owner=root group=root mode=0644
+  copy: src=conf/zabbix.ini dest=/etc/php5/apache2/conf.d/zabbix.ini owner=root group=root mode=0644
   notify:
     - "Restart Apache"
   tags:
