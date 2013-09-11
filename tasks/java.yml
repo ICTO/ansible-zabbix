@@ -1,31 +1,31 @@
 ---
 # Install Zabbix java dependencies
 - name: "Install Zabbix java dependencies"
-  action: ${ansible_pkg_mgr} pkg=${item} state=installed update-cache=yes
-  when_boolean: ${with_zabbix_java}
-  with_items: ${zabbix_java.dependencies}
+  action: ${ansible_pkg_mgr} pkg={{ item }} state=installed update-cache=yes
+  when: with_zabbix_java
+  with_items: zabbix_java.dependencies
   tags:
     - zabbix_java
 
 # Fetch .deb file from repository
 - name: "Fetch Debian package: ${zabbix_java.debian_package}"
-  action: get_url url=${zabbix_java.debian_repo}/${zabbix_java.debian_package} dest=${zabbix.tmp_dir} mode=0440 owner=root group=root
-  when_boolean: ${with_zabbix_java}
+  get_url: url={{ zabbix_java.debian_repo }}/{{ zabbix_java.debian_package }} dest={{ zabbix.tmp_dir }} mode=0440 owner=root group=root
+  when: with_zabbix_java
   tags:
     - zabbix_java
 
 # Install Zabbix java deb file
 - name: "Install Zabbix java: ${zabbix_java.debian_package}"
-  action: shell dpkg -i -E ${zabbix.tmp_dir}/${zabbix_java.debian_package} 2>&1 | grep skipping | wc -l
+  shell: dpkg -i -E {{ zabbix.tmp_dir }}/{{ zabbix_java.debian_package }} 2>&1 | grep skipping | wc -l
   register: java_installed
-  when_boolean: ${with_zabbix_java}
+  when: with_zabbix_java
   tags:
     - zabbix_java
 
 # # Override defaults from Zabbix java config file
 # - name: "Put custom Zabbix java settings in include dir"
-#   action: template src=templates/zabbix_agentd.conf.j2 dest=/etc/zabbix/zabbix_agentd.conf.d/custom.conf owner=root group=root mode=0640
-#   when_boolean: ${with_zabbix_java}
+#   template: src=zabbix_agentd.conf.j2 dest=/etc/zabbix/zabbix_agentd.conf.d/custom.conf owner=root group=root mode=0640
+#   when: with_zabbix_java
 #   notify:
 #     - "Restart Zabbix java"
 #   tags:
@@ -33,7 +33,7 @@
 
 # Ensure Zabbix Java Gateway is running
 - name: "Ensure Zabbix Java Gateway is running"
-  action: service name=${zabbix_java.name} state=started
-  when_boolean: ${with_zabbix_java}
+  service: name={{ zabbix_java.name }} state=started
+  when: with_zabbix_java
   tags:
     - zabbix_java

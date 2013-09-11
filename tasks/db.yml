@@ -3,34 +3,34 @@
 - name: "Install MySQL server"
   action: ${ansible_pkg_mgr} pkg=mysql-server state=installed update-cache=yes
   register: mysql_server
-  when_boolean: ${with_zabbix_server}
+  when: with_zabbix_server
   tags:
     - database
 
 - name: "Change MySQL root password"
-  action: shell mysqladmin -h ${mysql.host} -u ${mysql.admin_user} password ${mysql.admin_password}
-  when_changed: ${mysql_server}
+  shell: mysqladmin -h {{ mysql.host }} -u {{ mysql.admin_user }} password {{ mysql.admin_password }}
+  when: mysql_server.changed
   tags:
     - database
 
 # Install MySQLdb Python package, mandatory to manage MySQL with ansible
 - name: "Install MySQLdb python package"
   action: ${ansible_pkg_mgr} pkg=python-mysqldb state=installed update-cache=yes
-  when_boolean: ${with_zabbix_server}
+  when: with_zabbix_server
   tags:
     - database
 
 # Manage Zabbix database
 - name: "Manage Zabbix db: ${zabbix_server.db.name}"
-  action: mysql_db encoding=utf8 name=${zabbix_server.db.name} state=present login_user=${mysql.admin_user} login_password=${mysql.admin_password} login_host=${mysql.host}
-  when_boolean: ${with_zabbix_server}
+  mysql_db: encoding=utf8 name={{ zabbix_server.db.name }} state=present login_user={{ mysql.admin_user }} login_password={{ mysql.admin_password }} login_host={{ mysql.host }}
+  when: with_zabbix_server
   register: create_db
   tags:
     - database
 
 # Manage Zabbix database user
 - name: "Manage Zabbix db-user: ${zabbix_server.db.user}"
-  action: mysql_user name=${zabbix_server.db.user} password=${zabbix_server.db.pass} priv=${zabbix_server.db.name}.*:ALL state=present login_user=${mysql.admin_user} login_password=${mysql.admin_password} login_host=${mysql.host}
-  when_boolean: ${with_zabbix_server}
+  mysql_user: name={{ zabbix_server.db.user }} password={{ zabbix_server.db.pass }} priv={{ zabbix_server.db.name }}.*:ALL state=present login_user={{ mysql.admin_user }} login_password={{ mysql.admin_password }} login_host={{ mysql.host }}
+  when: with_zabbix_server
   tags:
     - database

@@ -1,0 +1,5 @@
+---
+with_zabbix_agent: False
+with_zabbix_server: False
+with_zabbix_web: False
+with_zabbix_java: False
