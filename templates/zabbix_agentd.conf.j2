@@ -233,3 +233,6 @@ ServerActive={{ with_zabbix_server_ip }}
 # Mandatory: no
 # Default:
 # UserParameter=
+{%  for item in zabbix_userparameter %}
+UserParameter={{ item }}
+{% endfor %}

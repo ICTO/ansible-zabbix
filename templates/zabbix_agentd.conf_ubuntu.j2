@@ -219,3 +219,6 @@ Server=zabbix1.ugent.be
 # Mandatory: no
 # Default:
 # UserParameter=
+{%  for item in zabbix_userparameter %}
+UserParameter={{ item }}
+{% endfor %}

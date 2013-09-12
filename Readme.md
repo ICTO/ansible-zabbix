@@ -26,8 +26,10 @@ Any Ansible version >= 1.2 should work. If not, please use the issue tracker to 
 ### Get the code
 
 ```bash
-$ git clone git@github.ugent.be:tberton/ansible-zabbix.git
+$ git clone git@github.ugent.be:Onderwijstechnologie/ansible-zabbix.git roles/zabbix
 ```
+
+The code should reside in the roles directory of ansible ( See [ansible documentation](http://www.ansibleworks.com/docs/playbooks.html#roles) for more information on roles ), in a folder zabbix.
 
 ### Create an Ansible inventory file
 
@@ -87,10 +89,19 @@ with_zabbix_java: true
 
 ### Run the playbook
 
+First create a playbook including the zabbix role, naming it zabbix.yml.
+
+```yml
+---
+- hosts: zabbix
+  roles:
+    - zabbix
+```
+
 Use *ansible.host* as inventory. Run the playbook only for the remote host *zabbix*. Use *vagrant* as the SSH user to connect to the remote host. *-k* enables the SSH password prompt.
 
 ```bash
-$ ansible-playbook -k -i ansible.host ansible-zabbix/setup.yml --extra-vars="user=vagrant"
+$ ansible-playbook -k -i ansible.host zabbix.yml --extra-vars="user=vagrant"
 ```
 
 ### Example output
