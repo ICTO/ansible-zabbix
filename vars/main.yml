@@ -1,0 +1,51 @@
+---
+zabbix_web:
+  debian_package: 'zabbix-frontend-php_2.0.5+dfsg-1_all.deb'
+  www_user: 'www-data'
+  www_group: 'www-data'
+  dependencies: 
+    - 'apache2'
+    - 'php5'
+    - 'libapache2-mod-php5'
+    - 'php5-mysql'
+    - 'php5-gd'
+    - 'ttf-dejavu-core'
+zabbix:
+  debian_repo: 'http://ftp.de.debian.org/debian/pool/main/z/zabbix/'
+  tmp_dir: /tmp
+zabbix_server:
+  debian_package: 'zabbix-server-mysql_2.0.5+dfsg-1_amd64.deb'
+  name: 'zabbix-server'
+  db:
+    name: zabbix
+    user: zabbix
+    pass: zabbix
+    sql_files:
+      - 'schema'
+      - 'images'
+      - 'data'
+  dependencies:
+    - 'fping'
+    - 'libiksemel3'
+    - 'libopenipmi0'
+    - 'libperl5.14'
+    - 'libsensors4'
+    - 'libsnmp-base'
+    - 'libsnmp15'
+    - 'libmysqlclient18'
+    - 'mysql-common'
+    - 'libiodbc2'
+    - 'libssl1.0.0'
+    - 'libssl-dev'
+    - 'dbconfig-common'
+zabbix_java:
+  debian_repo: 'http://repo.zabbix.com/zabbix/2.0/debian/pool/main/z/zabbix/'
+  debian_package: 'zabbix-java-gateway_2.0.5-1_amd64.deb'
+  name: 'zabbix-java-gateway'
+  dependencies: 
+  - 'openjdk-6-jre'
+zabbix_agent:
+  debian_package: 'zabbix-agent_2.0.5+dfsg-1_amd64.deb'
+  name: 'zabbix-agent'
+  dependencies: 
+    - 'libcurl3-gnutls'

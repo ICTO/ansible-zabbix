@@ -1,7 +1,0 @@
----
-# Zabbix agent variables
-zabbix_agent:
-  debian_package: 'zabbix-agent_2.0.5+dfsg-1_amd64.deb'
-  name: 'zabbix-agent'
-  dependencies: 
-    - 'libcurl3-gnutls'

@@ -1,22 +1,22 @@
 ---
 # Install Zabbix agent dependencies
 - name: "Install Zabbix agent dependencies"
-  action: ${ansible_pkg_mgr} pkg=${item} state=installed update-cache=yes
-  when_boolean: ${with_zabbix_agent}
-  with_items: ${zabbix_agent.dependencies}
+  action: ${ansible_pkg_mgr} pkg={{ item }} state=installed update-cache=yes
+  when: with_zabbix_agent
+  with_items: zabbix_agent.dependencies
   tags:
     - zabbix_agent
 
 # Install Zabbix agent deb file
 - name: "Install Zabbix agent"
   action: ${ansible_pkg_mgr} pkg=zabbix-agent state=installed update-cache=yes
-  when_boolean: ${with_zabbix_agent}
+  when: with_zabbix_agent
   tags:
     - zabbix_agent
 
 # Override defaults from Zabbix agent config file
 - name: "Put custom Zabbix agent settings in include dir"
-  action: template src=templates/zabbix_agentd.conf.j2 dest=/etc/zabbix/zabbix_agentd.conf.d/custom.conf owner=root group=root mode=0640
+  template: src=zabbix_agentd.conf.j2 dest=/etc/zabbix/zabbix_agentd.conf.d/custom.conf owner=root group=root mode=0640
   when: with_zabbix_agent and ansible_distribution == "Debian"
   notify:
     - "Restart Zabbix agent"
@@ -25,7 +25,7 @@
 
 # Override defaults from Zabbix agent config file
 - name: "Put custom Zabbix agent settings in include dir"
-  action: template src=templates/zabbix_agentd.conf_ubuntu.j2 dest=/etc/zabbix/zabbix_agentd.conf.d/custom.conf owner=root group=root mode=0640
+  template: src=zabbix_agentd.conf_ubuntu.j2 dest=/etc/zabbix/zabbix_agentd.conf.d/custom.conf owner=root group=root mode=0640
   when: with_zabbix_agent and ansible_distribution == "Ubuntu"
   notify:
     - "Restart Zabbix agent"
@@ -34,7 +34,7 @@
 
 # Ensure Zabbix agent is running
 - name: "Ensure Zabbix agent is running"
-  action: service name=${zabbix_agent.name} state=restarted
-  when_boolean: ${with_zabbix_agent}
+  service: name={{ zabbix_agent.name }} state=restarted
+  when: with_zabbix_agent
   tags:
     - zabbix_agent

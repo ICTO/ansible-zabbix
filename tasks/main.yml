@@ -8,16 +8,16 @@
 
 # Install the Zabbix agent
 - include: agent.yml
-  when_boolean: ${with_zabbix_agent}
+  when: with_zabbix_agent
 
 # Install the Zabbix server
 - include: server.yml
-  when_boolean: ${with_zabbix_server}
+  when: with_zabbix_server
 
 # Install the Zabbix webfronted using Apache
 - include: web.yml
-  when_boolean: ${with_zabbix_web}
+  when: with_zabbix_web
 
 # Install the Zabbix java gateway
 - include: java.yml
-  when_boolean: ${with_zabbix_java}
+  when: with_zabbix_java
