@@ -85,6 +85,9 @@ with_zabbix_web: true
 
 # Install Zabbix Java Gateway?
 with_zabbix_java: true
+
+zabbix_userparameter:
+  - 'key, command'
 ```
 
 ### Run the playbook
