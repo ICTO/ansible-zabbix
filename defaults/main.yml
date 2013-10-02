@@ -4,3 +4,8 @@ with_zabbix_server: False
 with_zabbix_web: False
 with_zabbix_java: False
 zabbix_userparameter: {}
+mysql:
+  admin_user: root
+  admin_password: root
+  host: 127.0.0.1
+with_zabbix_server_ip: 127.0.0.1
