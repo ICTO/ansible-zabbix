@@ -15,11 +15,11 @@ Everything you should know about Ansible is documented on the [Ansible](http://a
 
 #### Debian wheezy
 
-Playbook tested on *Debian-7.1*, probably works on other Debian versions too. Heavily depends on *apt*, sorry CentOS users...
+Playbook tested on *Debian-7.1*.
 
-#### Ansible >= 1.2
+#### Ansible >= 1.3
 
-Any Ansible version >= 1.2 should work. If not, please use the issue tracker to report any bugs.
+Any Ansible version >= 1.3 should work. If not, please use the issue tracker to report any bugs.
 
 ## Usage
 
@@ -43,10 +43,7 @@ with
 
 ```
 [zabbix]
-127.0.0.1 ansible_ssh_port=2222
-
-[zabbix:vars]
-with_zabbix_server_ip='127.0.0.1'
+127.0.0.1:2222
 ```
 
 The *ansible-zabbix* playbook is only executed for the host/group *zabbix*.
@@ -73,6 +70,9 @@ with
 # Install Zabbix agent?
 with_zabbix_agent: true
 
+# Zabbix server ip
+with_zabbix_server_ip: 127.0.0.1
+
 # Install Zabbix server?
 with_zabbix_server: true
 mysql:
@@ -86,6 +86,7 @@ with_zabbix_web: true
 # Install Zabbix Java Gateway?
 with_zabbix_java: true
 
+# Add custom userparameter(s)
 zabbix_userparameter:
   - 'key, command'
 ```
