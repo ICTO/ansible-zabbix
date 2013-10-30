@@ -1,65 +1,46 @@
 ---
 # Prepare database setup
 - include: db.yml
-  when: with_zabbix_server
 
 # Install Zabbix server dependencies
 - name: "Install Zabbix server dependencies"
   action: ${ansible_pkg_mgr} pkg={{ item }} state=installed update-cache=yes
-  when: with_zabbix_server
   with_items: zabbix_server.dependencies
-  tags:
-    - zabbix_server
 
 # Install Zabbix server deb file
 - name: "Install Zabbix server"
-  action: ${ansible_pkg_mgr} pkg=zabbix-server-mysql state=installed update-cache=yes
+  action: ${ansible_pkg_mgr} pkg={{ zabbix_server.package }} state=installed update-cache=yes
   register: server_installed
-  when: with_zabbix_server
-  tags:
-    - zabbix_server
+
+# Check if Zabbix db is empty
+- name: "Check if Zabbix db is empty"
+  action: shell mysql -h {{ mysql.host }} -u {{ mysql.admin_user }} --password={{ mysql.admin_password }} {{ zabbix_server.db.name }} -e "SHOW TABLES" | wc -l
+  register: zabbix_tables
 
 # Execute db installation scripts
 - name: "Execute Zabbix SQL files"
-  shell: zcat /usr/share/zabbix-server-mysql/{{ item }}.sql.gz | mysql -u{{ zabbix_server.db.user }} -p{{ zabbix_server.db.pass }} {{ zabbix_server.db.name }}
-  when: with_zabbix_server and create_db.changed
+  action: shell zcat /usr/share/zabbix-server-mysql/{{ item }}.sql.gz | mysql -u{{ zabbix_server.db.user }} -p{{ zabbix_server.db.pass }} {{ zabbix_server.db.name }}
+  when: with_zabbix_server and zabbix_tables.stdout == "0"
   with_items: zabbix_server.db.sql_files
-  tags:
-    - zabbix_server
 
 # Create Zabbix server include directory
 - name: "Create Zabbix server include directory"
-  file: path=/etc/zabbix/zabbix_server.conf.d group=root owner=root mode=0750 state=directory
-  when: with_zabbix_server
-  tags:
-    - zabbix_server
+  action: file path=/etc/zabbix/zabbix_server.conf.d group=root owner=root mode=0750 state=directory
 
 # Enable Zabbix server include directory
 - name: "Enable Zabbix server include directory"
-  lineinfile: dest=/etc/zabbix/zabbix_server.conf regexp="^.*Include=/etc/zabbix/zabbix_server.conf.d/" line="Include=/etc/zabbix/zabbix_server.conf.d/"
-  when: with_zabbix_server
-  tags:
-    - zabbix_server
+  action: lineinfile dest=/etc/zabbix/zabbix_server.conf regexp="^.*Include=/etc/zabbix/zabbix_server.conf.d/" line="Include=/etc/zabbix/zabbix_server.conf.d/"
 
 # Enable Zabbix server in /etc/default/zabbix-server
 - name: "Enable Zabbix server in /etc/default/zabbix-server"
-  lineinfile: dest=/etc/default/zabbix-server regexp="^START=" line="START=yes"
-  when: with_zabbix_server
-  tags:
-    - zabbix_server
+  action: lineinfile dest=/etc/default/zabbix-server regexp="^START=" line="START=yes"
 
 # Override defaults from Zabbix server config file
 - name: "Put custom Zabbix server settings in include dir"
-  template: src=zabbix_server.conf.j2 dest=/etc/zabbix/zabbix_server.conf.d/custom.conf owner=root group=root mode=0640
+  action: template src=zabbix_server.conf.j2 dest=/etc/zabbix/zabbix_server.conf.d/custom.conf owner=root group=root mode=0640
   notify:
     - "Restart Zabbix server"
-  when: with_zabbix_server
-  tags:
-    - zabbix_server
 
 # Ensure Zabbix server is running
 - name: "Ensure Zabbix server is running"
-  service: name={{ zabbix_server.name }} state=started
-  when: with_zabbix_server
-  tags:
-    - zabbix_server
+  action: service name={{ zabbix_server.service }} state=started

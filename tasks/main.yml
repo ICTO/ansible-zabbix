@@ -1,23 +1,23 @@
 ---
 # Execute some tests first
-- include: checks.yml
+- include: checks.yml tags=checks
 
 # Add Zabbix repository
-- include: repo.yml
+- include: repo.yml tags=repo
   when: ansible_distribution == "Debian"
 
 # Install the Zabbix agent
-- include: agent.yml
+- include: agent.yml tags=agent
   when: with_zabbix_agent
 
 # Install the Zabbix server
-- include: server.yml
+- include: server.yml tags=server
   when: with_zabbix_server
 
 # Install the Zabbix webfronted using Apache
-- include: web.yml
+- include: web.yml tags=web
   when: with_zabbix_web
 
 # Install the Zabbix java gateway
-- include: java.yml
+- include: java.yml tags=java_gateway
   when: with_zabbix_java

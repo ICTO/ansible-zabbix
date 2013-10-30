@@ -1,18 +1,12 @@
 ---
 #Make sure apt_add_repository is installed
-- name: "install python-software-properties"
-  apt: pkg=python-software-properties state=installed
-  tags:
-    - zabbix_repo
+- name: "Install python-software-properties"
+  action: apt pkg=python-software-properties state=installed
 
 #add repository to sources
-- name: "add wheezy backports repo to sources"
-  apt_repository: repo='deb http://mirror.as35701.net/debian/ wheezy-backports main'
-  tags:
-    - zabbix_repo
+- name: "Add wheezy backports repo to sources"
+  action: apt_repository repo='deb http://mirror.as35701.net/debian/ wheezy-backports main'
 
 #update cache
-- name: "update cache"
-  apt: update_cache=yes
-  tags:
-    - zabbix_repo
+- name: "Update cache"
+  action: apt update_cache=yes

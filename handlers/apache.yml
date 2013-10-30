@@ -1,0 +1,6 @@
+---
+- name: "Restart Apache"
+  action: service name={{ apache.service }} state=restarted
+
+- name: "Start Apache"
+  action: service name={{ apache.service }} state=started

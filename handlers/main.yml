@@ -2,4 +2,4 @@
 - include: zabbix_agent.yml
 - include: zabbix_java.yml
 - include: zabbix_server.yml
-- include: zabbix_web.yml
+- include: apache.yml

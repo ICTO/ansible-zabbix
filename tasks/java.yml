@@ -2,25 +2,16 @@
 # Install Zabbix java dependencies
 - name: "Install Zabbix java dependencies"
   action: ${ansible_pkg_mgr} pkg={{ item }} state=installed update-cache=yes
-  when: with_zabbix_java
   with_items: zabbix_java.dependencies
-  tags:
-    - zabbix_java
 
 # Fetch .deb file from repository
 - name: "Fetch Debian package: ${zabbix_java.debian_package}"
-  get_url: url={{ zabbix_java.debian_repo }}/{{ zabbix_java.debian_package }} dest={{ zabbix.tmp_dir }} mode=0440 owner=root group=root
-  when: with_zabbix_java
-  tags:
-    - zabbix_java
+  action: get_url url={{ zabbix_java.debian_repo }}/{{ zabbix_java.debian_package }} dest={{ zabbix.tmp_dir }} mode=0440 owner=root group=root
 
 # Install Zabbix java deb file
 - name: "Install Zabbix java: ${zabbix_java.debian_package}"
-  shell: dpkg -i -E {{ zabbix.tmp_dir }}/{{ zabbix_java.debian_package }} 2>&1 | grep skipping | wc -l
+  action: shell dpkg -i -E {{ zabbix.tmp_dir }}/{{ zabbix_java.debian_package }} 2>&1 | grep skipping | wc -l
   register: java_installed
-  when: with_zabbix_java
-  tags:
-    - zabbix_java
 
 # # Override defaults from Zabbix java config file
 # - name: "Put custom Zabbix java settings in include dir"
@@ -33,7 +24,4 @@
 
 # Ensure Zabbix Java Gateway is running
 - name: "Ensure Zabbix Java Gateway is running"
-  service: name={{ zabbix_java.name }} state=started
-  when: with_zabbix_java
-  tags:
-    - zabbix_java
+  action: service name={{ zabbix_java.service }} state=started

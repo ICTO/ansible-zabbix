@@ -1,3 +1,6 @@
 ---
 - name: "Restart Zabbix Java Gateway"
-  action: service name=${zabbix_java.name} state=restarted
+  action: service name={{ zabbix_java.service }} state=restarted
+
+- name: "Start Zabbix Java Gateway"
+  action: service name={{ zabbix_java.service }} state=started

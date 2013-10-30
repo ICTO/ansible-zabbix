@@ -1,3 +1,6 @@
 ---
 - name: "Restart Zabbix server"
-  action: service name=${zabbix_server.name} state=restarted
+  action: service name={{ zabbix_server.service }} state=restarted
+
+- name: "Start Zabbix server"
+  action: service name={{ zabbix_server.service }} state=started

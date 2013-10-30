@@ -3,32 +3,22 @@
 - name: "Install Zabbix PHP frontend dependencies"
   action: ${ansible_pkg_mgr} pkg={{ item }} state=installed update-cache=yes
   with_items: zabbix_web.dependencies
-  tags:
-    - zabbix_web
 
 # Install Zabbix web deb file
 - name: "Install Zabbix PHP frontend"
-  action: ${ansible_pkg_mgr} pkg=zabbix-frontend-php state=installed update-cache=yes
-  tags:
-    - zabbix_web
+  action: ${ansible_pkg_mgr} pkg={{ zabbix_web.package }} state=installed update-cache=yes
 
 - name: "Link Apache config file"
-  file: src=/usr/share/doc/zabbix-frontend-php/examples/apache.conf dest=/etc/apache2/conf.d/zabbix state=link
+  action: file src=/usr/share/doc/zabbix-frontend-php/examples/apache.conf dest=/etc/apache2/conf.d/zabbix state=link
   notify:
     - "Restart Apache"
-  tags:
-    - zabbix_web
 
 # Override defaults from Zabbix server config file
 - name: "Put Zabbix web frontend config in place"
-  template: src=zabbix_conf.php.j2 dest=/etc/zabbix/zabbix.conf.php owner={{ zabbix_web.www_user }} group={{ zabbix_web.www_group }} mode=0640
-  tags:
-    - zabbix_web
+  action: template src=zabbix_conf.php.j2 dest=/etc/zabbix/zabbix.conf.php owner={{ apache.user }} group={{ apache.group }} mode=0640
 
 # Manage Zabbix PHP settings
 - name: "Put custom Zabbix PHP settings in include dir"
-  copy: src=conf/zabbix.ini dest=/etc/php5/apache2/conf.d/zabbix.ini owner=root group=root mode=0644
+  action: copy src=conf/zabbix.ini dest=/etc/php5/apache2/conf.d/zabbix.ini owner=root group=root mode=0644
   notify:
     - "Restart Apache"
-  tags:
-    - zabbix_web
