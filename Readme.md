@@ -26,7 +26,7 @@ Any Ansible version >= 1.3 should work. If not, please use the issue tracker to 
 ### Get the code
 
 ```bash
-$ git clone git@github.ugent.be:Onderwijstechnologie/ansible-zabbix.git roles/zabbix
+$ git clone git@github.com:ICTO/ansible-zabbix.git roles/zabbix
 ```
 
 The code should reside in the roles directory of ansible ( See [ansible documentation](http://www.ansibleworks.com/docs/playbooks.html#roles) for more information on roles ), in a folder zabbix.

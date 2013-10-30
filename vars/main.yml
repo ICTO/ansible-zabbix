@@ -1,6 +1,5 @@
 ---
 zabbix_web:
-  #debian_package: 'zabbix-frontend-php_2.0.5+dfsg-1_all.deb'
   package: 'zabbix-frontend-php'
   dependencies: 
     - 'apache2'
@@ -14,7 +13,6 @@ zabbix:
   tmp_dir: /tmp
 
 zabbix_server:
-#  debian_package: 'zabbix-server-mysql_2.0.5+dfsg-1_amd64.deb'
   package: 'zabbix-server-mysql'
   service: 'zabbix-server'
   db:
@@ -47,7 +45,6 @@ zabbix_java:
   - 'openjdk-6-jre'
 
 zabbix_agent:
-  #debian_package: 'zabbix-agent_2.0.5+dfsg-1_amd64.deb'
   service: 'zabbix-agent'
   package: 'zabbix-agent'
 

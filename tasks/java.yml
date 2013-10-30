@@ -13,15 +13,6 @@
   action: shell dpkg -i -E {{ zabbix.tmp_dir }}/{{ zabbix_java.debian_package }} 2>&1 | grep skipping | wc -l
   register: java_installed
 
-# # Override defaults from Zabbix java config file
-# - name: "Put custom Zabbix java settings in include dir"
-#   template: src=zabbix_agentd.conf.j2 dest=/etc/zabbix/zabbix_agentd.conf.d/custom.conf owner=root group=root mode=0640
-#   when: with_zabbix_java
-#   notify:
-#     - "Restart Zabbix java"
-#   tags:
-#     - zabbix_java
-
 # Ensure Zabbix Java Gateway is running
 - name: "Ensure Zabbix Java Gateway is running"
   action: service name={{ zabbix_java.service }} state=started
