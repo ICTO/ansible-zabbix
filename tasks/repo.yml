@@ -3,9 +3,14 @@
 - name: "Install python-software-properties"
   action: apt pkg=python-software-properties state=installed
 
+- name: "Add zabbix repo key to server"
+  apt_key: url=http://repo.zabbix.com/zabbix-official-repo.key state=present
+
 #add repository to sources
-- name: "Add wheezy backports repo to sources"
-  action: apt_repository repo='deb http://mirror.as35701.net/debian/ wheezy-backports main'
+- name: "add official zabbix repo to sources"
+  apt_repository: repo="deb http://repo.zabbix.com/zabbix/2.0/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} main non-free contrib"
+  tags:
+    - zabbix_repo
 
 #update cache
 - name: "Update cache"
