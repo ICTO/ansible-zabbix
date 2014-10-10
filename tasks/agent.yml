@@ -5,8 +5,8 @@
 
 # Override defaults from Zabbix agent config file
 - name: "Put custom Zabbix agent settings in include dir"
-  action: template src={{ item }} dest=/etc/zabbix/zabbix_agentd.conf.d/custom.conf owner=root group=root mode=0640
-  first_available_file:
+  action: template src={{ item }} dest=/etc/zabbix/zabbix_agentd.d/custom.conf owner=root group=root mode=0644
+  with_first_found:
     - ../templates/zabbix_agentd.conf_{{ ansible_distribution }}_{{ ansible_lsb.release }}.j2
     - ../templates/zabbix_agentd.conf_{{ ansible_distribution }}.j2
     - ../templates/zabbix_agentd.conf.j2
