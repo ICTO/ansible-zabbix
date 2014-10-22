@@ -1,11 +1,11 @@
 ---
 # Install Zabbix agent deb file
 - name: "Install Zabbix agent"
-  action: ${ansible_pkg_mgr} pkg={{ zabbix_agent.package }} state=installed update-cache=yes
+  apt: pkg={{ zabbix_agent.package }} state=installed update-cache=yes
 
 # Override defaults from Zabbix agent config file
 - name: "Put custom Zabbix agent settings in include dir"
-  action: template src={{ item }} dest=/etc/zabbix/zabbix_agentd.d/custom.conf owner=root group=root mode=0644
+  template: src={{ item }} dest=/etc/zabbix/zabbix_agentd.d/custom.conf owner=root group=root mode=0644
   with_first_found:
     - ../templates/zabbix_agentd.conf_{{ ansible_distribution }}_{{ ansible_lsb.release }}.j2
     - ../templates/zabbix_agentd.conf_{{ ansible_distribution }}.j2
@@ -15,4 +15,4 @@
 
 # Ensure Zabbix agent is running
 - name: "Ensure Zabbix agent is running"
-  action: service name={{ zabbix_agent.service }} state=started
+  service: name={{ zabbix_agent.service }} state=started
