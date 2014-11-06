@@ -77,7 +77,7 @@
 # Default:
 # Server=
 
-Server=zabbix1.ugent.be
+Server={{ with_zabbix_server_ip }}
 
 ### Option: ListenPort
 #	Agent will listen on this port for connections from the server.
@@ -105,6 +105,20 @@ Server=zabbix1.ugent.be
 # StartAgents=3
 
 ##### Active checks related
+
+### Option: ServerActive
+#	List of comma delimited IP:port (or hostname:port) pairs of Zabbix servers for active checks.
+#	If port is not specified, default port is used.
+#	IPv6 addresses must be enclosed in square brackets if port for that host is specified.
+#	If port is not specified, square brackets for IPv6 addresses are optional.
+#	If this parameter is not specified, active checks are disabled.
+#	Example: ServerActive=127.0.0.1:20051,zabbix.domain,[::1]:30051,::1,[12fc::1]
+#
+# Mandatory: no
+# Default:
+# ServerActive=
+
+ServerActive={{ with_zabbix_server_ip }}
 
 ### Option: Hostname
 #	Unique, case sensitive hostname.
