@@ -10,25 +10,29 @@
     - zabbix
 
 # Install the Zabbix agent
-- include: agent.yml tags=agent
+- include: agent.yml
   when: with_zabbix_agent
   tags:
     - zabbix
+    - agent
 
 # Install the Zabbix server
-- include: server.yml tags=server
+- include: server.yml
   when: with_zabbix_server
   tags:
     - zabbix
+    - server
 
 # Install the Zabbix webfronted using Apache
-- include: web.yml tags=web
+- include: web.yml
   when: with_zabbix_web
   tags:
     - zabbix
+    - web
 
 # Install the Zabbix java gateway
-- include: java.yml tags=java_gateway
+- include: java.yml
   when: with_zabbix_java
   tags:
     - zabbix
+    - java_gateway
