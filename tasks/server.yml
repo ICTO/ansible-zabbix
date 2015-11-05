@@ -19,7 +19,7 @@
 
 # Execute db installation scripts
 - name: "Execute Zabbix SQL files"
-  action: shell zcat /usr/share/zabbix-server-mysql/{{ item }}.sql.gz | mysql -u{{ zabbix_server.db.user }} -p{{ zabbix_server.db.pass }} {{ zabbix_server.db.name }}
+  action: shell cat /usr/share/zabbix-server-mysql/{{ item }}.sql | mysql -u{{ zabbix_server.db.user }} -p{{ zabbix_server.db.pass }} {{ zabbix_server.db.name }}
   when: with_zabbix_server and zabbix_tables.stdout == "0"
   with_items: zabbix_server.db.sql_files
 
