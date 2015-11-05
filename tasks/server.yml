@@ -4,12 +4,12 @@
 
 # Install Zabbix server dependencies
 - name: "Install Zabbix server dependencies"
-  action: ${ansible_pkg_mgr} pkg={{ item }} state=installed update-cache=yes
+  apt: pkg={{ item }} state=installed update-cache=yes
   with_items: zabbix_server.dependencies
 
 # Install Zabbix server deb file
 - name: "Install Zabbix server"
-  action: ${ansible_pkg_mgr} pkg={{ zabbix_server.package }} state=installed update-cache=yes
+  apt: pkg={{ zabbix_server.package }} state=installed update-cache=yes
   register: server_installed
 
 # Check if Zabbix db is empty
@@ -32,8 +32,8 @@
   action: lineinfile dest=/etc/zabbix/zabbix_server.conf regexp="^.*Include=/etc/zabbix/zabbix_server.conf.d/" line="Include=/etc/zabbix/zabbix_server.conf.d/"
 
 # Enable Zabbix server in /etc/default/zabbix-server
-- name: "Enable Zabbix server in /etc/default/zabbix-server"
-  action: lineinfile dest=/etc/default/zabbix-server regexp="^START=" line="START=yes"
+#- name: "Enable Zabbix server in /etc/default/zabbix-server"
+#  action: lineinfile dest=/etc/default/zabbix-server regexp="^START=" line="START=yes"
 
 # Override defaults from Zabbix server config file
 - name: "Put custom Zabbix server settings in include dir"

@@ -1,7 +1,7 @@
 ---
 # Install Zabbix java dependencies
 - name: "Install Zabbix java dependencies"
-  action: ${ansible_pkg_mgr} pkg={{ item }} state=installed update-cache=yes
+  apt: pkg={{ item }} state=installed update-cache=yes
   with_items: zabbix_java.dependencies
 
 # Fetch .deb file from repository

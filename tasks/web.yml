@@ -1,15 +1,15 @@
 ---
 # Install Zabbix php webfrontend dependencies
 - name: "Install Zabbix PHP frontend dependencies"
-  action: ${ansible_pkg_mgr} pkg={{ item }} state=installed update-cache=yes
+  apt: pkg={{ item }} state=installed update-cache=yes
   with_items: zabbix_web.dependencies
 
 # Install Zabbix web deb file
 - name: "Install Zabbix PHP frontend"
-  action: ${ansible_pkg_mgr} pkg={{ zabbix_web.package }} state=installed update-cache=yes
+  apt: pkg={{ zabbix_web.package }} state=installed update-cache=yes
 
 - name: "Link Apache config file"
-  action: file src=/usr/share/doc/zabbix-frontend-php/examples/apache.conf dest=/etc/apache2/conf.d/zabbix state=link
+  action: file src=/etc/zabbix/apache.conf dest=/etc/apache2/conf.d/zabbix state=link
   notify:
     - "Restart Apache"
 

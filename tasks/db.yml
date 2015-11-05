@@ -1,7 +1,7 @@
 ---
 # Install MySQL server
 - name: "Install MySQL server"
-  action: ${ansible_pkg_mgr} pkg=mysql-server state=installed update-cache=yes
+  apt: pkg=mysql-server state=installed update-cache=yes
   register: mysql_server
   when: with_zabbix_server
 
@@ -16,7 +16,7 @@
 
 # Install MySQLdb Python package, mandatory to manage MySQL with ansible
 - name: "Install MySQLdb python package"
-  action: ${ansible_pkg_mgr} pkg=python-mysqldb state=installed update-cache=yes
+  apt: pkg=python-mysqldb state=installed update-cache=yes
   when: with_zabbix_server
 
 # Manage Zabbix database
