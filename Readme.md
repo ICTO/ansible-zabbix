@@ -105,7 +105,7 @@ First create a playbook including the zabbix role, naming it zabbix.yml.
 Use *ansible.host* as inventory. Run the playbook only for the remote host *zabbix*. Use *vagrant* as the SSH user to connect to the remote host. *-k* enables the SSH password prompt.
 
 ```bash
-$ ansible-playbook -k -s -i ansible.host zabbix.yml --extra-vars="user=vagrant"
+$ ansible-playbook -k -s -i ansible.host zabbix.yml -u vagrant
 ```
 
 ## Docs and contact
