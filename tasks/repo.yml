@@ -1,4 +1,8 @@
 ---
+#update cache
+- name: "Update cache"
+  action: apt update_cache=yes
+
 #Make sure apt_add_repository is installed
 - name: "Install python-software-properties"
   action: apt pkg=python-software-properties state=installed
@@ -11,7 +15,3 @@
   apt_repository: repo="deb http://repo.zabbix.com/zabbix/2.0/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} main non-free contrib"
   tags:
     - zabbix_repo
-
-#update cache
-- name: "Update cache"
-  action: apt update_cache=yes
