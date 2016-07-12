@@ -5,7 +5,7 @@
 
 #Make sure apt_add_repository is installed
 - name: "Install python-software-properties"
-  action: apt pkg=python-software-properties state=installed
+  apt: pkg=python-software-properties state=present
 
 - name: "Add zabbix repo key to server"
   apt_key: url=http://repo.zabbix.com/zabbix-official-repo.key state=present

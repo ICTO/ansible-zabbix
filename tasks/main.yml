@@ -6,6 +6,7 @@
 
 # Add Zabbix repository
 - include: repo.yml
+  when: ansible_os_family == "Debian" and not ( ansible_lsb.id == "Ubuntu" and ansible_lsb.major_release|int >= 16 )
   tags:
     - zabbix
 
